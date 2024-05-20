@@ -5,18 +5,19 @@ struct SubscriptionView: View {
     @State private var isSubscribing = false
     @State private var showAlert = false
     @State private var alertMessage = ""
+    @Binding var isPresented: Bool // Binding to control the presentation
 
     var body: some View {
         VStack {
             Text("Subscribe to access the AI Chatbot")
                 .font(.largeTitle)
-                .padding()
                 .multilineTextAlignment(.center)
+                .padding()
 
             Text("Subscribe for $4.99 per week to use the chatbot.")
                 .font(.subheadline)
-                .padding()
                 .multilineTextAlignment(.center)
+                .padding()
 
             Button(action: {
                 purchaseSubscription()
@@ -25,7 +26,7 @@ struct SubscriptionView: View {
                     .foregroundColor(.white)
                     .padding()
                     .frame(width: 250, height: 50)
-                    .background(Color.pink)
+                    .background(Color.blue)
                     .cornerRadius(10)
             }
             .padding()
@@ -33,6 +34,14 @@ struct SubscriptionView: View {
 
             if isSubscribing {
                 ProgressView()
+                    .padding()
+            }
+
+            Button(action: {
+                isPresented = false // Dismiss the modal
+            }) {
+                Text("Cancel")
+                    .foregroundColor(.blue)
                     .padding()
             }
         }
@@ -45,7 +54,7 @@ struct SubscriptionView: View {
         isSubscribing = true
 
         // Load your product request
-        let productIdentifiers = Set([""])
+        let productIdentifiers = Set(["com.yourapp.subscription.weekly"])
         let request = SKProductsRequest(productIdentifiers: productIdentifiers)
         request.delegate = SubscriptionManager.shared
         request.start()
@@ -104,24 +113,31 @@ class SubscriptionManager: NSObject, SKProductsRequestDelegate, SKPaymentTransac
 
 struct AdvisingTabView: View {
     @State private var isSubscribed = false
+    @State private var showSubscriptionView = true // Control the presentation of the subscription modal
 
     var body: some View {
         NavigationView {
-            if isSubscribed {
-                ChatView()
-            } else {
-                SubscriptionView()
-                    .onAppear {
-                        // Check subscription status
-                        checkSubscriptionStatus()
-                    }
-            }
+            ChatView()
+                .onAppear {
+                    // Check subscription status
+                    checkSubscriptionStatus()
+                }
+                .disabled(!isSubscribed) // Disable the chat view if not subscribed
+                .sheet(isPresented: $showSubscriptionView, content: {
+                    SubscriptionView(isPresented: $showSubscriptionView)
+                })
         }
     }
 
     func checkSubscriptionStatus() {
         // Implement your logic to check subscription status
         // Set `isSubscribed` accordingly
+        // Example:
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            // Assume we have checked and found that the user is not subscribed
+            isSubscribed = false
+            showSubscriptionView = true // Show subscription modal if not subscribed
+        }
     }
 }
 
