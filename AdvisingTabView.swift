@@ -45,7 +45,7 @@ struct SubscriptionView: View {
         isSubscribing = true
 
         // Load your product request
-        let productIdentifiers = Set(["CompassSub567890"])
+        let productIdentifiers = Set([""])
         let request = SKProductsRequest(productIdentifiers: productIdentifiers)
         request.delegate = SubscriptionManager.shared
         request.start()
