@@ -26,7 +26,7 @@ struct SubscriptionView: View {
                     .foregroundColor(.white)
                     .padding()
                     .frame(width: 250, height: 50)
-                    .background(Color.blue)
+                    .background(Color.pink)
                     .cornerRadius(10)
             }
             .padding()
@@ -41,7 +41,7 @@ struct SubscriptionView: View {
                 isPresented = false // Dismiss the modal
             }) {
                 Text("Cancel")
-                    .foregroundColor(.blue)
+                    .foregroundColor(.pink)
                     .padding()
             }
         }
